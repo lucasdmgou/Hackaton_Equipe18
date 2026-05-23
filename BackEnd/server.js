@@ -3,10 +3,12 @@ const path = require("path");
 const { Server } = require("socket.io");
 const http = require("http");
 
+const session = require("express-session");
 
-// 1. Importa os arquivos de rotas
 const authRoutes = require("./routes/auth.routes");
 const gameRoutes = require("./routes/game.routes");
+const roomRoutes = require("./routes/room.routes");
+const requireNickname = require("./middlewares/auth.middleware");
 
 //controler socket
 const socketController = require("./controllers/mechanics/sockets");
@@ -26,19 +28,33 @@ socketController.gerenciarConexoes(io);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Permite acessar arquivos estáticos (CSS, JS do FrontEnd)
-// Ajustado para apontar para a sua pasta FrontEnd real
+app.use(session({
+    secret: "segredo-hackathon-equipe18",
+    resave: false,
+    saveUninitialized: false
+}));
+
 app.use(express.static(path.join(__dirname, "..", "FrontEnd")));
 
-// Rota base de teste
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "FrontEnd", "pages", "Index.html"));
+});
+
 app.get("/server", (req, res) => {
     res.send("Servidor funcionando!");
 });
 
-// 2. Vincula as rotas ao servidor
-// Opcional: Adicionei "/auth" como prefixo para organizar melhor
-app.use("/auth", authRoutes); // O login vai virar http://localhost:3000/auth/login
-app.use("/game", gameRoutes);    // O game vai virar http://localhost:3000/game
+app.get("/lobby", requireNickname, (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "FrontEnd", "pages", "lobby.html"));
+});
+
+app.use("/auth", authRoutes);
+app.use("/game", gameRoutes);
+app.use("/", roomRoutes);
+
+app.get("/game/:code", requireNickname, (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "FrontEnd", "pages", "game.html"));
+});
 
 server.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
