@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sala de espera</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma/css/bulma.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <section class="section page-bg">
+        <div class="container">
+            <div class="has-text-centered mb-6">
+                <h1 class="title is-2">Sala de espera</h1>
+                <p class="subtitle">Aguardando os jogadores entrarem...</p>
+            </div>
+
+            <div class="columns is-centered">
+                <div class="column is-5">
+                    <div class="box has-text-centered">
+                        <p class="heading">Código da sala</p>
+
+                        <h2 id="room-code" class="title is-1 room-code">
+                            ----
+                        </h2>
+
+                        <p>Compartilhe esse código com os outros jogadores.</p>
+                    </div>
+                </div>
+
+                <div class="column is-5">
+                    <div class="box">
+                        <h2 class="title is-4">Jogadores na sala</h2>
+
+                        <ul id="players-list" class="players-list">
+                            <li>Carregando jogadores...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="has-text-centered mt-5">
+                <a id="start-game" class="button is-success is-large is-rounded" href="#">
+                    Iniciar jogo
+                </a>
+
+                <br><br>
+
+                <a href="/lobby" class="button is-light">
+                    Voltar para o lobby
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script src="/js/lobby.js"></script>
+</body>
+</html>
