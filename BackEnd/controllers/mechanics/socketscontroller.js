@@ -3,3 +3,7 @@ const renderSockets = (req, res) => {
     res.send("sockets funcionando!");
 };
 
+module.exports = {
+    renderSockets
+};
+

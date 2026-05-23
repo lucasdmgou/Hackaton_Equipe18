@@ -3,3 +3,7 @@ const renderAnim = (req, res) => {
     res.send("anim funcionando!");
 };
 
+module.exports = {
+    renderAnim
+};
+

@@ -8,9 +8,13 @@ const gameRoutes = require("./routes/game.routes");
 const app = express();
 const PORT = 3000;
 
+// Middleware para parsear dados JSON e formulários
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // Permite acessar arquivos estáticos (CSS, JS do FrontEnd)
 // Ajustado para apontar para a sua pasta FrontEnd real
-app.use(express.static(path.join(__dirname, "FrontEnd")));
+app.use(express.static(path.join(__dirname, "..", "FrontEnd")));
 
 // Rota base de teste
 app.get("/server", (req, res) => {
