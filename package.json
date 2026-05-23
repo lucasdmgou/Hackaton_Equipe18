@@ -1,18 +1,14 @@
 {
   "dependencies": {
-<<<<<<< HEAD
     "express": "^5.2.1",
-    "socket.io": "^4.8.3"
-=======
+    "socket.io": "^4.8.3",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
-    "express": "^5.2.1",
     "express-session": "^1.19.0",
     "sqlite3": "^6.0.1"
   },
   "scripts": {
     "start": "node BackEnd/server.js",
     "dev": "node BackEnd/server.js"
->>>>>>> 3ffa412e4a0f7604fe68a95da65f29d8d602c085
   }
 }
