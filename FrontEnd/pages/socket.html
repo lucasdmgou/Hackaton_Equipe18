@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page for Sockets</title>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    </head>
+<body>
+    <h1>Testando Conexão Socket</h1>
+    <div id="container-do-jogo" style="width: 800px; height: 600px; background-color: #222; margin: 0 auto;">
+    </div>
+    <script>
+        $(document).ready(function () {
+            const socket = io();
+            const $arena = $("#container-do-jogo");
+
+            // Objeto para rastrear quais teclas estão seguradas
+            const teclasPressionadas = {};
+
+            // Captura quando o jogador APERTA a tecla
+            $(window).on("keydown", function (evento) {
+                teclasPressionadas[evento.key.toLowerCase()] = true;
+
+                // Se apertar espaço, o ataque ainda pode ser um evento único imediato
+                if (evento.key === " ") {
+                    socket.emit("player_attack");
+                }
+            });
+
+            // Captura quando o jogador SOLTA a tecla
+            $(window).on("keyup", function (evento) {
+                teclasPressionadas[evento.key.toLowerCase()] = false;
+            });
+
+            // === O LOOP DO JOGO (Roda a 60 FPS no Cliente) ===
+            function gameLoop() {
+                // Verifica o que está pressionado e envia IMEDIATAMENTE para o servidor
+                if (teclasPressionadas["arrowup"]    || teclasPressionadas["w"]) socket.emit("player_move", "up");
+                if (teclasPressionadas["arrowdown"]  || teclasPressionadas["s"]) socket.emit("player_move", "down");
+                if (teclasPressionadas["arrowleft"]  || teclasPressionadas["a"]) socket.emit("player_move", "left");
+                if (teclasPressionadas["arrowright"] || teclasPressionadas["d"]) socket.emit("player_move", "right");
+
+                // Chama o próximo frame da animação
+                requestAnimationFrame(gameLoop);
+            }
+
+            // Inicia o loop de varredura de teclas
+            requestAnimationFrame(gameLoop);
+
+            // Renderização idêntica (O servidor continua mandando o estado oficial)
+            socket.on("atualizar_jogadores", function (jogadoresDoServidor) {
+                $arena.empty();
+                Object.keys(jogadoresDoServidor).forEach(function (id) {
+                    const dados = jogadoresDoServidor[id];
+                    if (dados.hp <= 0) return;
+
+                    const $quadrado = $("<div></div>").css({
+                        "position": "absolute",
+                        "width": "50px",
+                        "height": "50px",
+                        "left": dados.x + "px",
+                        "top": dados.y + "px",
+                        "background-color": id === socket.id ? "#00ff00" : "#ff0000"
+                    });
+
+                    $quadrado.html("<div style='color:white; text-align:center; font-size:12px; padding-top:15px;'>HP: "+dados.hp+"</div>");
+                    $arena.append($quadrado);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

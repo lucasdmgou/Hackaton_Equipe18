@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar no jogo</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma/css/bulma.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <section class="section page-bg">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-5">
+                    <div class="box">
+                        <h1 class="title has-text-centered">Entrar no jogo</h1>
+
+                        <p class="has-text-centered mb-5">
+                            Escolha um apelido para identificar seu personagem na sala.
+                        </p>
+
+                        <form action="/auth/login" method="POST">
+                            <div class="field">
+                                <label class="label" for="nickname">Apelido</label>
+
+                                <div class="control">
+                                    <input
+                                        class="input is-medium"
+                                        id="nickname"
+                                        type="text"
+                                        name="nickname"
+                                        placeholder="Ex: Lucas"
+                                        minlength="2"
+                                        maxlength="20"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="field mt-5">
+                                <div class="control">
+                                    <button class="button is-link is-fullwidth is-medium" type="submit">
+                                        Continuar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="has-text-centered mt-4">
+                            <a href="/">Voltar para início</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
