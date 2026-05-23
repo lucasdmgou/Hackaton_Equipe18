@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page for Sockets</title>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    </head>
+<body>
+    <h1>Testando Conexão Socket</h1>
+
+    <script>
+        const socket = io();
+        const Player = {
+            posX: 0,
+            posY: 0
+        };
+
+
+        socket.on("connect", () => {
+            console.log("Conectado ao servidor via WebSocket com o ID:", socket.id);
+        });
+
+        // Exemplo: Enviando dados de movimentação para o servidor
+        function enviarMovimento(x, y) {
+            socket.emit("player_move", { posX: x, posY: y });
+        }
+
+        socket.on("update_position", (data) => {
+            console.log("Outro jogador se moveu:", data);
+        });
+    </script>
+</body>
+</html>

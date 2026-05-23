@@ -1,12 +1,26 @@
 const express = require("express");
 const path = require("path");
+const { Server } = require("socket.io");
+const http = require("http");
+
 
 // 1. Importa os arquivos de rotas
 const authRoutes = require("./routes/auth.routes");
 const gameRoutes = require("./routes/game.routes");
 
+//controler socket
+const socketController = require("./controllers/mechanics/sockets");
+
 const app = express();
 const PORT = 3000;
+
+// web socket
+const server = http.createServer(app);
+const io = new Server(server);
+
+
+socketController.gerenciarConexoes(io);
+
 
 // Middleware para parsear dados JSON e formulários
 app.use(express.json());
@@ -26,6 +40,7 @@ app.get("/server", (req, res) => {
 app.use("/auth", authRoutes); // O login vai virar http://localhost:3000/auth/login
 app.use("/game", gameRoutes);    // O game vai virar http://localhost:3000/game
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+
