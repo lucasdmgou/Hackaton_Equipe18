@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Seleção de Personagem</title>
+<style>
+body{
+    margin:0;
+    background:#87CEEB;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    font-family:sans-serif;
+}
+
+h1{
+    color:white;
+    margin-bottom:20px;
+}
+
+.characters{
+    display:flex;
+    gap:20px;
+}
+
+.character{
+    width:32px; /* tamanho visível */
+    height:32px;
+    background-repeat:no-repeat;
+    image-rendering: pixelated;
+    transform:scale(2); /* ajuste proporcional ao tamanho do sprite */
+    cursor:pointer;
+    border:2px solid transparent;
+    transition:border 0.2s;
+}
+
+.character.selected{
+    border:2px solid yellow;
+}
+
+#startBtn{
+    margin-top:30px;
+    padding:10px 20px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+/* Player após escolha */
+.player{
+    position:absolute;
+    width:16px;
+    height:16px;
+    image-rendering: pixelated;
+    transform:scale(6);
+}
+
+/* Animação walk */
+.walk{
+    animation: walk 0.5s steps(4) infinite;
+}
+
+@keyframes walk{
+    from { background-position-x: 0; }
+    to { background-position-x: -64px; }
+}
+</style>
+</head>
+<body>
+
+<h1>Escolha seu personagem</h1>
+
+<div class="characters">
+    <div class="character" id="char1" style="background-image:url('../sprites/img.png')"></div>
+    <div class="character" id="char2" style="background-image:url('../sprites/img1.png')"></div>
+    <div class="character" id="char3" style="background-image:url('../sprites/img2.png')"></div>
+    <div class="character" id="char4" style="background-image:url('../sprites/img3.png')"></div>
+</div>
+
+<button id="startBtn">Iniciar Jogo</button>
+
+<script>
+let selectedCharacter = null;
+const chars = document.querySelectorAll(".character");
+
+// Seleção de personagem
+chars.forEach(char => {
+    char.addEventListener("click", ()=>{
+        chars.forEach(c => c.classList.remove("selected"));
+        char.classList.add("selected");
+        selectedCharacter = char.style.backgroundImage;
+    });
+});
+
+// Iniciar jogo
+document.getElementById("startBtn").addEventListener("click", ()=>{
+    if(!selectedCharacter){
+        alert("Escolha um personagem antes de iniciar!");
+        return;
+    }
+
+    // Limpa tela de seleção
+    document.body.innerHTML = "";
+
+    // Cria player com o sprite selecionado
+    const player = document.createElement("div");
+    player.classList.add("player");
+    player.style.backgroundImage = selectedCharacter;
+    player.style.left = "200px";
+    player.style.top = "200px";
+    document.body.appendChild(player);
+
+    // Variáveis de movimento
+    let x = 200;
+    let y = 200;
+    const speed = 3;
+    const keys = {};
+
+    document.addEventListener("keydown", e => keys[e.key] = true);
+    document.addEventListener("keyup", e => keys[e.key] = false);
+
+    function gameLoop(){
+        let moving = false;
+
+        if(keys["a"] || keys["ArrowLeft"]){ x -= speed; player.style.backgroundPositionY = "-16px"; moving = true; }
+        if(keys["d"] || keys["ArrowRight"]){ x += speed; player.style.backgroundPositionY = "-32px"; moving = true; }
+        if(keys["w"] || keys["ArrowUp"]){ y -= speed; player.style.backgroundPositionY = "-48px"; moving = true; }
+        if(keys["s"] || keys["ArrowDown"]){ y += speed; player.style.backgroundPositionY = "0px"; moving = true; }
+
+        player.style.left = x + "px";
+        player.style.top = y + "px";
+
+        if(moving) player.classList.add("walk");
+        else { player.classList.remove("walk"); player.style.backgroundPositionX = "0px"; }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+});
+</script>
+
+</body>
+</html>

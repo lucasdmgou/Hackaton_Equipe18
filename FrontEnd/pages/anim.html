@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Sprite</title>
+
+<style>
+
+body{
+    margin:0;
+    overflow:hidden;
+    background:#87CEEB;
+}
+
+/* PERSONAGEM */
+.player{
+    width:32px;
+    height:32px;
+
+    position:absolute;
+
+    left:200px;
+    top:200px;
+
+    background-image: url("../sprites/img.png");
+    background-repeat:no-repeat;
+
+    image-rendering: pixelated;
+
+    transform:scale(4);
+    transform-origin: top left;
+}
+
+/* animação */
+.walk{
+    animation: walk 0.5s steps(4) infinite;
+}
+
+@keyframes walk{
+    from{
+        background-position-x:0px;
+    }
+
+    to{
+        background-position-x:-128px;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div class="player" id="player"></div>
+
+<script>
+
+const player = document.getElementById("player");
+
+let x = 200;
+let y = 200;
+
+const speed = 3;
+
+const keys = {};
+
+document.addEventListener("keydown", (e)=>{
+    keys[e.key] = true;
+});
+
+document.addEventListener("keyup", (e)=>{
+    keys[e.key] = false;
+});
+
+function gameLoop(){
+
+    let moving = false;
+
+    // BAIXO
+    if(keys["s"] || keys["ArrowDown"]){
+
+        y += speed;
+
+        player.style.backgroundPositionY = "0px";
+
+        moving = true;
+    }
+
+    // ESQUERDA
+    if(keys["a"] || keys["ArrowLeft"]){
+
+        x -= speed;
+
+        player.style.backgroundPositionY = "-32px";
+
+        moving = true;
+    }
+
+    // DIREITA
+    if(keys["d"] || keys["ArrowRight"]){
+
+        x += speed;
+
+        player.style.backgroundPositionY = "-64px";
+
+        moving = true;
+    }
+
+    // CIMA
+    if(keys["w"] || keys["ArrowUp"]){
+
+        y -= speed;
+
+        player.style.backgroundPositionY = "-96px";
+
+        moving = true;
+    }
+
+    player.style.left = x + "px";
+    player.style.top = y + "px";
+
+    if(moving){
+        player.classList.add("walk");
+    }else{
+        player.classList.remove("walk");
+        player.style.backgroundPositionX = "0px";
+    }
+
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+
+</script>
+
+</body>
+</html>
