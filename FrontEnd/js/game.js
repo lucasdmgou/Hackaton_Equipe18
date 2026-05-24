@@ -52,10 +52,10 @@ const punchReach = 26;
 
 const answerAreas = [
     // Apenas as 2 áreas superiores do mapa
-    { id: "A", label: "A", x: 67, y: 101, width: 118, height: 55 },
-    { id: "B", label: "B", x: 292, y: 101, width: 118, height: 55 },
-    { id: "C", label: "C", x: 67, y: 225, width: 118, height: 56 },
-    { id: "D", label: "D", x: 292, y: 225, width: 118, height: 56 }
+    { id: "A", label: "A", x: 67, y: 101, width: 120, height: 55 },
+    { id: "B", label: "B", x: 292, y: 101, width: 120, height: 55 },
+    { id: "C", label: "C", x: 67, y: 213, width: 120, height: 56 },
+    { id: "D", label: "D", x: 292, y: 213, width: 120, height: 56 }
 ];
 
 const collisionAreas = [
