@@ -22,6 +22,8 @@ const background = new Image();
 background.src = "/assets/maps/arena.webp";
 const correctAnswerSound = new Audio("/assets/audio/correct-answer.mp3");
 correctAnswerSound.volume = 0.75;
+const punchHitSound = new Audio("/assets/audio/punch-hit.mp3");
+punchHitSound.volume = 0.8;
 
 const keys = {};
 const speed = 2.1;
@@ -40,15 +42,20 @@ let highlightedCorrectAnswer = null;
 let correctAnswerHighlightStartedAt = 0;
 let questionDeadlineAt = 0;
 let questionTimerIntervalId = null;
+let lastPunchAt = 0;
+const activePunches = {};
 
 const correctAnswerHighlightDuration = 2000;
+const punchCooldown = 550;
+const punchAnimationDuration = 220;
+const punchReach = 26;
 
 const answerAreas = [
     // Apenas as 2 áreas superiores do mapa
-    { id: "A", label: "A", x: 67, y: 101, width: 120, height: 55 },
-    { id: "B", label: "B", x: 292, y: 101, width: 120, height: 55 },
-    { id: "C", label: "C", x: 67, y: 213, width: 120, height: 56 },
-    { id: "D", label: "D", x: 292, y: 213, width: 120, height: 56 }
+    { id: "A", label: "A", x: 67, y: 101, width: 118, height: 55 },
+    { id: "B", label: "B", x: 292, y: 101, width: 118, height: 55 },
+    { id: "C", label: "C", x: 67, y: 225, width: 118, height: 56 },
+    { id: "D", label: "D", x: 292, y: 225, width: 118, height: 56 }
 ];
 
 const collisionAreas = [
@@ -156,6 +163,40 @@ function playCorrectAnswerSound() {
     correctAnswerSound.play().catch(() => {
         // The browser may block effects until the player interacts with the page.
     });
+}
+
+function playPunchHitSound() {
+    punchHitSound.currentTime = 0;
+    punchHitSound.play().catch(() => {
+        // The browser may block effects until the player interacts with the page.
+    });
+}
+
+function getDirectionVector(direction = "down") {
+    const vectors = {
+        up: { x: 0, y: -1 },
+        down: { x: 0, y: 1 },
+        left: { x: -1, y: 0 },
+        right: { x: 1, y: 0 },
+        "up-left": { x: -0.7071, y: -0.7071 },
+        "up-right": { x: 0.7071, y: -0.7071 },
+        "down-left": { x: -0.7071, y: 0.7071 },
+        "down-right": { x: 0.7071, y: 0.7071 }
+    };
+
+    return vectors[direction] || vectors.down;
+}
+
+function startPunchAnimation(playerId, direction, hit) {
+    if (!playerId) {
+        return;
+    }
+
+    activePunches[playerId] = {
+        direction: direction || "down",
+        hit: Boolean(hit),
+        startedAt: Date.now()
+    };
 }
 
 function getPlayerCollisionBox(x, y) {
@@ -306,6 +347,49 @@ function drawPixelCharacter(playerPosition) {
     ctx.restore();
 }
 
+function drawPunchEffects() {
+    const now = Date.now();
+
+    Object.entries(activePunches).forEach(([playerId, punch]) => {
+        const playerPosition = positions[playerId];
+        const elapsed = now - punch.startedAt;
+
+        if (!playerPosition || elapsed > punchAnimationDuration) {
+            delete activePunches[playerId];
+            return;
+        }
+
+        const progress = elapsed / punchAnimationDuration;
+        const vector = getDirectionVector(punch.direction);
+        const startX = playerPosition.x + vector.x * 6;
+        const startY = playerPosition.y + vector.y * 6;
+        const endX = playerPosition.x + vector.x * (14 + punchReach * progress);
+        const endY = playerPosition.y + vector.y * (14 + punchReach * progress);
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0.2, 1 - progress * 0.65);
+        ctx.strokeStyle = punch.hit ? "#fffdf5" : "rgba(255, 253, 245, 0.7)";
+        ctx.lineWidth = punch.hit ? 4 : 3;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        if (punch.hit) {
+            ctx.fillStyle = "#ffdf6e";
+            ctx.strokeStyle = "#5a3418";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(endX, endY, 5 - progress * 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        ctx.restore();
+    });
+}
+
 function drawGame() {
     resizeCanvas();
 
@@ -325,6 +409,7 @@ function drawGame() {
     drawAnswerAreas();
 
     Object.values(positions).forEach(drawPixelCharacter);
+    drawPunchEffects();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     animationFrame++;
@@ -418,12 +503,40 @@ function submitCurrentAnswer() {
     });
 }
 
+function submitPunch() {
+    if (!currentPlayer || !positions[currentPlayer.id] || gameFinished) {
+        return;
+    }
+
+    const now = Date.now();
+
+    if (now - lastPunchAt < punchCooldown) {
+        return;
+    }
+
+    lastPunchAt = now;
+
+    const playerPosition = positions[currentPlayer.id];
+    const direction = playerPosition.direction || "down";
+    startPunchAnimation(currentPlayer.id, direction, false);
+
+    socket.emit("playerPunch", {
+        roomCode,
+        playerId: currentPlayer.id
+    });
+}
+
 window.addEventListener("keydown", event => {
     keys[event.code] = true;
 
     if (event.code === "Space") {
         event.preventDefault();
         submitCurrentAnswer();
+    }
+
+    if (event.code === "KeyF") {
+        event.preventDefault();
+        submitPunch();
     }
 });
 
@@ -458,6 +571,20 @@ socket.on("playersUpdated", data => {
     };
 
     updateCurrentPlayerHud();
+});
+
+socket.on("punchResult", data => {
+    positions = {
+        ...positions,
+        ...data.positions
+    };
+
+    const hitPlayerIds = data.hitPlayerIds || [];
+    startPunchAnimation(data.attackerId, data.direction, hitPlayerIds.length > 0);
+
+    if (hitPlayerIds.length > 0) {
+        playPunchHitSound();
+    }
 });
 
 socket.on("answerResult", data => {
