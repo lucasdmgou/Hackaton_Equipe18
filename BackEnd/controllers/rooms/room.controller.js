@@ -24,6 +24,11 @@ function addPlayerToRoom(room, player) {
 
 const createRoom = (req, res) => {
     const player = req.session.player;
+    const questions = req.session.questions || [];
+
+    if (questions.length === 0) {
+        return res.redirect("/questions");
+    }
 
     let code = generateRoomCode();
 
@@ -36,6 +41,7 @@ const createRoom = (req, res) => {
         code,
         hostPlayerId: player.id,
         status: "waiting",
+        questions,
         players: []
     };
 
@@ -59,11 +65,15 @@ const joinRoom = (req, res) => {
         return res.status(404).send("Sala não encontrada.");
     }
 
-    if (room.status !== "waiting") {
-        return res.status(400).send("Essa sala já está em andamento.");
+    if (room.status === "finished") {
+        return res.status(400).send("Essa sala já foi finalizada.");
     }
 
     addPlayerToRoom(room, player);
+
+    if (room.status === "playing") {
+        return res.redirect(`/game/${room.code}`);
+    }
 
     return res.redirect(`/room/${room.code}`);
 };
@@ -91,7 +101,12 @@ const getRoomData = (req, res) => {
     }
 
     return res.json({
-        ...room,
+        id: room.id,
+        code: room.code,
+        hostPlayerId: room.hostPlayerId,
+        status: room.status,
+        players: room.players,
+        questionCount: (room.questions || []).length,
         currentPlayer: req.session.player
     });
 };

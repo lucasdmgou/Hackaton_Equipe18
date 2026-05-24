@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="game-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,29 +8,56 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma/css/bulma.min.css">
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <section class="section page-bg">
+<body class="game-body">
+    <section class="section page-bg game-page">
         <div class="container">
-            <div class="box has-text-centered">
-                <h1 class="title is-2">Área do jogo</h1>
+            <div class="game-layout">
+                <div class="game-hud box">
+                    <div>
+                        <p class="heading">Sala</p>
+                        <strong id="room-code">----</strong>
+                    </div>
 
-                <p class="subtitle">
-                    Código da sala:
-                    <strong id="room-code"></strong>
-                </p>
+                    <div>
+                        <p class="heading">Vidas</p>
+                        <strong id="player-hearts">❤️❤️❤️</strong>
+                    </div>
 
-                <div class="notification is-info is-light">
-                    Esta tela será usada pela equipe responsável pelo mapa, perguntas,
-                    movimentação e Socket.io.
+                    <div>
+                        <p class="heading">Pontos</p>
+                        <strong id="player-score">0</strong>
+                    </div>
+
+                    <a href="/lobby" class="button is-soft is-small">Sair</a>
                 </div>
 
-                <a href="/lobby" class="button is-light">
-                    Voltar para o lobby
-                </a>
+                <div class="question-panel box has-text-centered">
+                    <div class="question-meta">
+                        <p id="question-count" class="heading">Pergunta</p>
+                        <p id="question-timer" class="question-timer">Tempo: --s</p>
+                    </div>
+                    <h1 id="question-text" class="title is-5">Carregando pergunta...</h1>
+                    <p id="question-options" class="subtitle is-6"></p>
+                    <p id="answer-helper" class="answer-helper">
+                        Pise em uma área de resposta e pressione Espaço.
+                    </p>
+                </div>
+
+                <div class="arena-wrapper box">
+                    <canvas id="arena" width="480" height="320"></canvas>
+                </div>
+
+                <div class="box status-panel">
+                    <p id="current-area">Área atual: nenhuma</p>
+                    <p id="answer-feedback">Aguardando resposta...</p>
+                    <p class="is-size-7">Use WASD ou setas para andar. Espaço confirma a resposta.</p>
+                </div>
+                <div id="score-toast" class="score-toast" aria-live="polite"></div>
             </div>
         </div>
     </section>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script src="/js/game.js"></script>
 </body>
 </html>

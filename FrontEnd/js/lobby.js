@@ -17,12 +17,8 @@ if (roomCodeElement && playersListElement && startGameElement) {
                 const li = document.createElement("li");
 
                 li.innerHTML = `
-                    <span class="tag is-link is-light is-medium">
-                        ${player.nickname}
-                    </span>
-                    <span class="ml-2">
-                        ${player.hearts} vidas
-                    </span>
+                    <span class="tag is-player is-medium">${player.nickname}</span>
+                    <span class="ml-2">${player.hearts} vidas</span>
                 `;
 
                 playersListElement.appendChild(li);
@@ -30,9 +26,7 @@ if (roomCodeElement && playersListElement && startGameElement) {
         })
         .catch(() => {
             playersListElement.innerHTML = `
-                <li class="has-text-danger">
-                    Erro ao carregar jogadores.
-                </li>
+                <li>Erro ao carregar jogadores.</li>
             `;
         });
 }

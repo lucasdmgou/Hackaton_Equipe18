@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar perguntas</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma/css/bulma.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <section class="section page-bg">
+        <div class="container">
+            <div class="has-text-centered mb-5">
+                <h1 class="title is-2 page-title">Cadastrar perguntas</h1>
+                <p class="subtitle">Crie de 1 a 10 perguntas com alternativas A, B, C e D.</p>
+            </div>
+
+            <form action="/questions" method="POST" class="question-builder">
+                <div id="questions-list"></div>
+
+                <div class="question-actions">
+                    <button id="add-question" class="button is-field" type="button">
+                        Adicionar pergunta
+                    </button>
+
+                    <button class="button is-arena" type="submit">
+                        Salvar perguntas
+                    </button>
+
+                    <a href="/lobby" class="button is-soft">
+                        Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <template id="question-template">
+        <div class="box question-card">
+            <div class="question-card-header">
+                <h2 class="title is-4 question-title">Pergunta</h2>
+                <button class="button is-soft is-small remove-question" type="button">
+                    Remover
+                </button>
+            </div>
+
+            <div class="field">
+                <label class="label">Texto da pergunta</label>
+                <div class="control">
+                    <input class="input" data-field="text" type="text" maxlength="160" required>
+                </div>
+            </div>
+
+            <div class="answer-grid">
+                <div class="field">
+                    <label class="label">Alternativa A</label>
+                    <input class="input" data-option="A" type="text" maxlength="90" required>
+                </div>
+
+                <div class="field">
+                    <label class="label">Alternativa B</label>
+                    <input class="input" data-option="B" type="text" maxlength="90" required>
+                </div>
+
+                <div class="field">
+                    <label class="label">Alternativa C</label>
+                    <input class="input" data-option="C" type="text" maxlength="90" required>
+                </div>
+
+                <div class="field">
+                    <label class="label">Alternativa D</label>
+                    <input class="input" data-option="D" type="text" maxlength="90" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Resposta correta</label>
+                <div class="control">
+                    <div class="select is-fullwidth">
+                        <select data-field="correctAnswer" required>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="/js/background-music.js"></script>
+    <script src="/js/question-form.js"></script>
+</body>
+</html>

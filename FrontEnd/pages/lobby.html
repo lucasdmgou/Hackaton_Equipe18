@@ -27,8 +27,12 @@
                             Gere um código para convidar outros jogadores.
                         </p>
 
+                        <a href="/questions" class="button is-field is-fullwidth is-medium mb-3">
+                            Cadastrar perguntas
+                        </a>
+
                         <form action="/rooms/create" method="POST">
-                            <button class="button is-primary is-fullwidth is-medium" type="submit">
+                            <button class="button is-arena is-fullwidth is-medium" type="submit">
                                 Criar nova sala
                             </button>
                         </form>
@@ -56,7 +60,7 @@
                                 </div>
                             </div>
 
-                            <button class="button is-link is-fullwidth is-medium mt-4" type="submit">
+                            <button class="button is-field is-fullwidth is-medium mt-4" type="submit">
                                 Entrar na sala
                             </button>
                         </form>
@@ -65,11 +69,13 @@
             </div>
 
             <div class="has-text-centered mt-5">
-                <a href="/auth/logout" class="button is-light">
+                <a href="/auth/logout" class="button is-soft">
                     Trocar apelido
                 </a>
             </div>
         </div>
     </section>
+
+    <script src="/js/background-music.js"></script>
 </body>
 </html>
