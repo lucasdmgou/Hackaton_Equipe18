@@ -608,6 +608,7 @@ socket.on("timeEnded", data => {
 });
 
 socket.on("questionResolved", data => {
+    alreadyAnswered = true;
     stopQuestionTimerDisplay();
     questionTimerElement.innerText = "Tempo: 0s";
     highlightedCorrectAnswer = data.correctAnswer;

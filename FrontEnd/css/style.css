@@ -558,6 +558,21 @@ a:hover {
     font-weight: 700;
 }
 
+.question-panel.box #question-options {
+    color: #2b1b0d;
+    font-weight: 800;
+}
+
+.question-panel.box #question-options strong {
+    display: inline-block;
+    min-width: 18px;
+    margin-right: 2px;
+    color: var(--wood-dark);
+    font-weight: 900;
+    text-align: center;
+    text-shadow: none;
+}
+
 .answer-helper {
     font-size: 0.86rem;
 }

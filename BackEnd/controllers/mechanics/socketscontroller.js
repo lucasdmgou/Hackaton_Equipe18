@@ -422,7 +422,7 @@ function setupGameSocket(io) {
             const room = findRoomByCode(roomCode);
             const state = activeGames[roomCode];
 
-            if (!room || !state || state.finished || state.answeredPlayers[playerId]) {
+            if (!room || !state || state.finished || state.resolvingQuestion || state.answeredPlayers[playerId]) {
                 return;
             }
 
